@@ -12,7 +12,7 @@
 Контакт: ${contact}
 Задача: ${message}`;
 
-    const response = await fetch(`https://api.telegram.org/bot8766295126:AAHRxatfSU5XT5Pm0SNJnYqzf16wFsBn7CY/sendMessage`, {
+    const response = await fetch(`https://api.telegram.org/bot8766295126:AAGLP2t7vKh65hCInNGOHmCYIVOtIbO5OdE/sendMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
