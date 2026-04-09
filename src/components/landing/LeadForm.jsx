@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
@@ -14,14 +13,44 @@ export default function LeadForm() {
     if (!form.name || !form.contact) return;
 
     setLoading(true);
-    await base44.entities.Lead.create({
-      name: form.name,
-      contact: form.contact,
-      project_info: form.project_info,
-      status: 'new',
-    });
-    setLoading(false);
-    setSubmitted(true);
+
+    try {
+      const text = `Новая заявка с сайта:
+Имя: ${form.name}
+Контакт: ${form.contact}
+Задача: ${form.project_info || '-'}`;
+
+      const response = await fetch(
+        "https://api.telegram.org/bot8766295126:AAGLP2t7vKh65hCInNGOHmCYIVOtIbO5OdE/sendMessage",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            chat_id: 475754754,
+            text
+          })
+        }
+      );
+
+      const data = await response.json();
+      console.log("TELEGRAM RESPONSE:", data);
+
+      if (!response.ok) {
+        alert("Ошибка: " + (data.description || ""));
+        setLoading(false);
+        return;
+      }
+
+      setSubmitted(true);
+      setForm({ name: '', contact: '', project_info: '' });
+    } catch (err) {
+      console.error("FORM ERROR:", err);
+      alert("Ошибка отправки");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
