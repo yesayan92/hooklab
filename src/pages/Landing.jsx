@@ -1,42 +1,40 @@
-import { useRef, useCallback } from 'react';
-import Hero from '../components/landing/Hero';
-import ProblemSection from '../components/landing/ProblemSection';
-import SolutionSection from '../components/landing/SolutionSection';
-import ProcessSection from '../components/landing/ProcessSection';
-import CasesSection from '../components/landing/CasesSection';
-import CalculatorSection from '../components/landing/CalculatorSection';
-import PackagesSection from '../components/landing/PackagesSection';
-import WhyUsSection from '../components/landing/WhyUsSection';
-import FormatSection from '../components/landing/FormatSection';
-import FAQSection from '../components/landing/FAQSection';
-import FinalCTA from '../components/landing/FinalCTA';
-import FloatingCTA from '../components/landing/FloatingCTA';
-import Header from '../components/landing/Header';
-import Footer from '../components/landing/Footer';
+<form
+  onSubmit={async (e) => {
+    e.preventDefault();
 
-export default function Landing() {
-  const formRef = useRef(null);
+    const form = e.target;
+    const name = form.name.value;
+    const contact = form.contact.value;
+    const message = form.message.value;
 
-  const scrollToForm = useCallback(() => {
-    formRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+    const text = `Новая заявка с сайта:
+Имя: ${name}
+Контакт: ${contact}
+Задача: ${message}`;
 
-  return (
-    <div className="min-h-screen">
-      <Header onCTAClick={scrollToForm} />
-      <Hero onCTAClick={scrollToForm} />
-      <ProblemSection />
-      <SolutionSection />
-      <ProcessSection onCTAClick={scrollToForm} />
-      <CasesSection />
-      <CalculatorSection onCTAClick={scrollToForm} />
-      <PackagesSection onCTAClick={scrollToForm} />
-      <WhyUsSection />
-      <FormatSection />
-      <FAQSection onCTAClick={scrollToForm} />
-      <FinalCTA formRef={formRef} />
-      <FloatingCTA onCTAClick={scrollToForm} />
-      <Footer />
-    </div>
-  );
-}
+    await fetch(`https://api.telegram.org/8766295126:AAHRxatfSU5XT5Pm0SNJnYqzf16wFsBn7CY/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: 323670159,
+        text: text
+      })
+    });
+
+    alert("Заявка отправлена");
+    form.reset();
+  }}
+  style={{ marginTop: "60px", padding: "20px", border: "1px solid #ccc" }}
+>
+  <h2>Оставить заявку</h2>
+
+  <input name="name" placeholder="Имя" required style={{ display: "block", marginBottom: "10px" }} />
+  
+  <input name="contact" placeholder="Телеграм или телефон" required style={{ display: "block", marginBottom: "10px" }} />
+  
+  <textarea name="message" placeholder="Задача" style={{ display: "block", marginBottom: "10px" }} />
+
+  <button type="submit">Отправить</button>
+</form>
