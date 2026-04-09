@@ -12,16 +12,24 @@
 Контакт: ${contact}
 Задача: ${message}`;
 
-    await fetch(`https://api.telegram.org/8766295126:AAHRxatfSU5XT5Pm0SNJnYqzf16wFsBn7CY/sendMessage`, {
+    const response = await fetch(`https://api.telegram.org/8766295126:AAHRxatfSU5XT5Pm0SNJnYqzf16wFsBn7CY/sendMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         chat_id: 323670159,
-        text: text
+        text
       })
     });
+
+    const data = await response.json();
+    console.log(data);
+
+    if (!response.ok) {
+      alert("Ошибка отправки");
+      return;
+    }
 
     alert("Заявка отправлена");
     form.reset();
@@ -31,10 +39,7 @@
   <h2>Оставить заявку</h2>
 
   <input name="name" placeholder="Имя" required style={{ display: "block", marginBottom: "10px" }} />
-  
   <input name="contact" placeholder="Телеграм или телефон" required style={{ display: "block", marginBottom: "10px" }} />
-  
   <textarea name="message" placeholder="Задача" style={{ display: "block", marginBottom: "10px" }} />
-
   <button type="submit">Отправить</button>
 </form>
