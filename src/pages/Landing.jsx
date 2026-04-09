@@ -18,7 +18,7 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        chat_id: 323670159,
+        chat_id: 475754754,
         text
       })
     });
