@@ -1,46 +1,51 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import LeadForm from './LeadForm';
+<div style={{ marginTop: "60px" }}>
+  <h2>Оставить заявку</h2>
 
-export default function FinalCTA({ formRef }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  <form
+    onSubmit={async (e) => {
+      e.preventDefault();
 
-  return (
-    <section
-      ref={(node) => {
-        ref.current = node;
-        if (formRef) formRef.current = node;
-      }}
-      className="relative bg-accent overflow-hidden"
-    >
-      {/* Gradient overlay for warmth transition */}
-      <div className="absolute inset-0 bg-gradient-to-b from-accent/90 to-accent" />
+      try {
+        const form = e.target;
+        const name = form.name.value;
+        const contact = form.contact.value;
+        const message = form.message.value;
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-28 md:py-40">
-        <div className="grid md:grid-cols-2 gap-16 md:gap-24 items-start">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h2 className="font-heading font-bold text-4xl md:text-5xl lg:text-7xl leading-tight tracking-tight text-accent-foreground">
-              Разберём ваш проект и покажем, где вы теряете деньги
-            </h2>
-            <p className="mt-6 text-lg text-accent-foreground/70 max-w-md">
-              Заполните форму — мы проанализируем ваш проект и подготовим предложение
-            </p>
-          </motion.div>
+        const text = `Новая заявка с сайта:
+Имя: ${name}
+Контакт: ${contact}
+Задача: ${message}`;
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <LeadForm />
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
+        const response = await fetch("https://api.telegram.org/bot8766295126:AAGLP2t7vKh65hCInNGOHmCYIVOtIbO5OdE/sendMessage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            chat_id: 475754754,
+            text
+          })
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        if (!response.ok) {
+          alert("Ошибка: " + (data.description || ""));
+          return;
+        }
+
+        alert("Заявка отправлена");
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        alert("Ошибка отправки");
+      }
+    }}
+  >
+    <input name="name" placeholder="Имя" required />
+    <input name="contact" placeholder="Телеграм или телефон" required />
+    <textarea name="message" placeholder="Задача" />
+    <button type="submit">Отправить</button>
+  </form>
+</div>
